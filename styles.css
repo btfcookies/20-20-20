@@ -1,0 +1,155 @@
+:root {
+  --paper: #edefec;
+  --ink: #1b2320;
+  --near: #4a6fa5;
+  --far: #8fae7c;
+  --line: #d6d9d2;
+  --dim: #6b7268;
+
+  --state-color: var(--near);
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.stage {
+  width: min(90vw, 30rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: clamp(1.5rem, 4vh, 2.75rem);
+  padding: 2rem 1.5rem;
+  animation: rise 700ms var(--ease) both;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.state-label {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--state-color);
+  transition: color 400ms var(--ease);
+}
+
+.dial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  min-height: 6.5rem;
+  justify-content: center;
+}
+
+.clock {
+  font-size: clamp(3.5rem, 14vw, 6rem);
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+.message {
+  margin: 0;
+  max-width: 26ch;
+  font-family: "Newsreader", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.1rem, 3.4vw, 1.4rem);
+  color: var(--dim);
+  line-height: 1.4;
+}
+
+.glyph-wrap {
+  width: 5rem;
+  height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.glyph {
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 50%;
+  background: var(--state-color);
+  filter: blur(6px);
+  opacity: 0.55;
+  transition: background-color 400ms var(--ease);
+}
+
+.action {
+  appearance: none;
+  border: 1px solid var(--ink);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.9rem 2.1rem;
+  cursor: pointer;
+  transition: background-color 200ms var(--ease), color 200ms var(--ease), border-color 200ms var(--ease);
+}
+
+.action:hover {
+  background: var(--state-color);
+  border-color: var(--state-color);
+  color: var(--paper);
+}
+
+.action:focus-visible {
+  outline: 2px solid var(--state-color);
+  outline-offset: 3px;
+}
+
+.action[hidden] {
+  display: none;
+}
+
+/* state hooks, toggled via body[data-phase] from script.js */
+body[data-phase="focus"],
+body[data-phase="breakReady"] {
+  --state-color: var(--near);
+}
+
+body[data-phase="breakActive"],
+body[data-phase="breakDone"] {
+  --state-color: var(--far);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage {
+    animation: none;
+  }
+  .glyph,
+  .state-label,
+  .action {
+    transition: none;
+  }
+}
