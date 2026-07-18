@@ -167,6 +167,69 @@ body[data-phase="breakDone"] {
   outline-offset: 3px;
 }
 
+.volume-control {
+  position: fixed;
+  left: 1.25rem;
+  bottom: 1.15rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.volume-label {
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--dim);
+}
+
+.volume-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 5.5rem;
+  height: 1px;
+  background: var(--line);
+  border-radius: 1px;
+  cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: var(--dim);
+  transition: background-color 150ms var(--ease);
+}
+
+.volume-slider::-moz-range-track {
+  background: var(--line);
+  height: 1px;
+  border: none;
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: var(--dim);
+  border: none;
+  transition: background-color 150ms var(--ease);
+}
+
+.volume-slider:hover::-webkit-slider-thumb,
+.volume-slider:focus-visible::-webkit-slider-thumb,
+.volume-slider:hover::-moz-range-thumb,
+.volume-slider:focus-visible::-moz-range-thumb {
+  background: var(--ink);
+}
+
+.volume-slider:focus-visible {
+  outline: 2px solid var(--state-color);
+  outline-offset: 3px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .stage {
     animation: none;
@@ -174,7 +237,9 @@ body[data-phase="breakDone"] {
   .glyph,
   .state-label,
   .action,
-  .repo-link {
+  .repo-link,
+  .volume-slider::-webkit-slider-thumb,
+  .volume-slider::-moz-range-thumb {
     transition: none;
   }
 }

@@ -9,6 +9,7 @@
   const messageEl = document.getElementById("message");
   const glyphEl = document.getElementById("glyph");
   const actionBtn = document.getElementById("actionBtn");
+  const volumeSlider = document.getElementById("volume");
 
   const COPY = {
     focus: {
@@ -156,6 +157,23 @@
     render();
   });
 
+  // --- Volume ---
+  const VOLUME_KEY = "20-20-20-volume";
+  let volume = 0.7;
+
+  function loadVolume() {
+    const stored = Number(localStorage.getItem(VOLUME_KEY));
+    if (!Number.isNaN(stored) && localStorage.getItem(VOLUME_KEY) !== null) {
+      volume = Math.min(1, Math.max(0, stored));
+    }
+    volumeSlider.value = String(Math.round(volume * 100));
+  }
+
+  volumeSlider.addEventListener("input", () => {
+    volume = Math.min(1, Math.max(0, Number(volumeSlider.value) / 100));
+    localStorage.setItem(VOLUME_KEY, String(volume));
+  });
+
   // --- Web Audio chime ---
   // Repeats until the user clicks Start Break / Finish Break, so it can't be missed.
   const CHIME_REPEAT_MS = 4000;
@@ -189,6 +207,7 @@
   document.addEventListener("keydown", ensureAudio);
 
   function playChime() {
+    if (volume <= 0) return;
     ensureAudio();
     if (!audioCtx || audioCtx.state !== "running") return;
 
@@ -196,6 +215,7 @@
       { freq: 784.0, start: 0, dur: 0.9 }, // G5
       { freq: 1046.5, start: 0.15, dur: 1.0 }, // C6
     ];
+    const peak = 0.16 * volume;
 
     notes.forEach(({ freq, start, dur }) => {
       const osc = audioCtx.createOscillator();
@@ -205,7 +225,7 @@
 
       const t0 = audioCtx.currentTime + start;
       gain.gain.setValueAtTime(0, t0);
-      gain.gain.linearRampToValueAtTime(0.16, t0 + 0.03);
+      gain.gain.linearRampToValueAtTime(peak, t0 + 0.03);
       gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
 
       osc.connect(gain).connect(audioCtx.destination);
@@ -214,6 +234,7 @@
     });
   }
 
+  loadVolume();
   load();
   render();
   if (phase === "breakReady" || phase === "breakDone") {
