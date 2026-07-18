@@ -136,17 +136,18 @@
       phase = "breakReady";
       endTime = null;
       save();
-      playChime();
+      startChimeLoop();
     } else if (phase === "breakActive" && Date.now() >= endTime) {
       phase = "breakDone";
       endTime = null;
       save();
-      playChime();
+      startChimeLoop();
     }
     render();
   }
 
   actionBtn.addEventListener("click", () => {
+    stopChimeLoop();
     if (phase === "breakReady") {
       startBreak();
     } else if (phase === "breakDone") {
@@ -156,7 +157,23 @@
   });
 
   // --- Web Audio chime ---
+  // Repeats until the user clicks Start Break / Finish Break, so it can't be missed.
+  const CHIME_REPEAT_MS = 4000;
   let audioCtx = null;
+  let chimeInterval = null;
+
+  function startChimeLoop() {
+    if (chimeInterval) return;
+    playChime();
+    chimeInterval = setInterval(playChime, CHIME_REPEAT_MS);
+  }
+
+  function stopChimeLoop() {
+    if (chimeInterval) {
+      clearInterval(chimeInterval);
+      chimeInterval = null;
+    }
+  }
 
   function ensureAudio() {
     if (!audioCtx) {
@@ -199,5 +216,8 @@
 
   load();
   render();
+  if (phase === "breakReady" || phase === "breakDone") {
+    startChimeLoop();
+  }
   tickHandle = setInterval(tick, 250);
 })();
